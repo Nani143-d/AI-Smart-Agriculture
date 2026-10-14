@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == 'register' %}Create account{% else %}Login{% endif %} | AI Smart Agriculture{% endblock %}
+{% block content %}
+<section class="container page-wrap"><div class="form-panel auth-panel"><span class="eyebrow">YOUR FARM WORKSPACE</span>
+{% if mode == "register" %}<h1 class="page-title">Create account</h1><p class="muted">Register to save your analyses.</p><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn-green w-100 mt-3">Create account</button></form><p class="auth-switch">Already registered? <a href="{% url 'login' %}">Login</a></p>
+{% else %}<h1 class="page-title">Welcome back</h1><p class="muted">Sign in to your agriculture dashboard.</p>{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}<form method="post">{% csrf_token %}<label class="form-label">Username</label><input class="form-control mb-3" name="username" required autocomplete="username"><label class="form-label">Password</label><input class="form-control" type="password" name="password" required autocomplete="current-password"><button class="btn btn-green w-100 mt-4">Login</button></form><p class="auth-switch">New here? <a href="{% url 'register' %}">Create an account</a></p>{% endif %}
+</div></section>
+{% endblock %}

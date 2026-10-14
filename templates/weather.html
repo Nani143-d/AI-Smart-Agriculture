@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Weather | AI Smart Agriculture{% endblock %}
+{% block content %}
+<section class="container page-wrap"><div class="form-panel"><span class="eyebrow">LOCAL CONDITIONS</span><h1 class="page-title">Weather information</h1><p class="muted">Check current weather for a city.</p>
+<form method="post">{% csrf_token %}<label class="form-label">City</label>{{ form.city }}<button class="btn btn-green mt-3">Get weather →</button></form>
+{% if weather %}{% if weather.error %}<div class="alert alert-warning mt-4">{{ weather.error }}</div>{% else %}<div class="weather-result mt-4"><span class="eyebrow">CURRENT WEATHER</span><h2>{{ weather.city }}</h2><div class="weather-temp">{{ weather.temperature }}°C</div><p>{{ weather.condition }}</p><div class="row"><div class="col-6"><strong>{{ weather.humidity }}%</strong><small>Humidity</small></div><div class="col-6"><strong>{{ weather.wind }} m/s</strong><small>Wind speed</small></div></div><p class="muted mt-3">Feels like {{ weather.feels_like }}°C</p></div>{% endif %}{% endif %}
+<div class="notice mt-4">Live weather requires an OpenWeather API key in the OPENWEATHER_API_KEY environment variable.</div></div></section>
+{% endblock %}

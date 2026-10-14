@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Yield Prediction | AI Smart Agriculture{% endblock %}
+{% block content %}
+<section class="container page-wrap"><div class="form-panel"><span class="eyebrow">MACHINE LEARNING</span><h1 class="page-title">Crop yield estimation</h1><p class="muted">Enter crop, soil, nutrient, and weather values.</p>
+<form method="post" novalidate>{% csrf_token %}
+<div class="mb-3"><label class="form-label">Crop</label>{{ form.crop }}</div><div class="mb-3"><label class="form-label">Soil type</label>{{ form.soil }}</div>
+<div class="row"><div class="col-md-4 mb-3"><label class="form-label">Nitrogen</label>{{ form.nitrogen }}</div><div class="col-md-4 mb-3"><label class="form-label">Phosphorus</label>{{ form.phosphorus }}</div><div class="col-md-4 mb-3"><label class="form-label">Potassium</label>{{ form.potassium }}</div>
+<div class="col-md-6 mb-3"><label class="form-label">Temperature (°C)</label>{{ form.temperature }}</div><div class="col-md-6 mb-3"><label class="form-label">Rainfall (mm)</label>{{ form.rainfall }}</div></div><button class="btn btn-green mt-2">Estimate yield →</button></form>
+{% if prediction %}<div class="result-panel mt-4"><span class="eyebrow">ESTIMATE</span><h2>{{ prediction.yield_t_ha }} tonnes/hectare</h2><p>Method: {{ prediction.method }}</p><p>{{ prediction.notice }}</p></div>{% endif %}
+</div></section>
+{% endblock %}

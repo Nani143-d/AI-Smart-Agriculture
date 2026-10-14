@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %}Crop Disease | AI Smart Agriculture{% endblock %}
+
+{% block content %}
+<section class="container page-wrap">
+    <div class="form-panel">
+        <span class="eyebrow">COMPUTER VISION</span>
+        <h1 class="page-title">Crop disease detection</h1>
+        <p class="muted">
+            Upload a clear photo of one leaf. A trained model is required for a real classification.
+        </p>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <label class="form-label" for="{{ form.image.id_for_label }}">
+                Leaf image
+            </label>
+
+            {{ form.image }}
+
+            {% for error in form.image.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+
+            <div class="scanner-controls mt-3">
+                <button type="button" class="btn btn-green" id="startScanner">
+                    📷 Scan Leaf
+                </button>
+
+                <button type="button" class="btn btn-green" id="captureLeaf" hidden>
+                    Capture Photo
+                </button>
+
+                <button type="button" class="btn btn-green" id="stopScanner" hidden>
+                    Close Camera
+                </button>
+            </div>
+
+            <div id="scannerArea" hidden class="mt-3">
+                <video
+                    id="cameraPreview"
+                    autoplay
+                    playsinline
+                    style="width:100%;max-width:480px;border-radius:14px;"
+                ></video>
+            </div>
+
+            <p id="scannerMessage" class="muted mt-2" role="status"></p>
+            <canvas id="scannerCanvas" hidden></canvas>
+
+            <button class="btn btn-green mt-4" type="submit">
+                Analyze image →
+            </button>
+        </form>
+
+        {% if result %}
+        <div class="result-panel mt-4">
+            {% if result.image_url %}
+            <img
+                class="preview-image"
+                src="{{ result.image_url }}"
+                alt="Uploaded crop leaf"
+            >
+            {% endif %}
+
+            <h2>{{ result.label }}</h2>
+
+            {% if result.confidence != None %}
+            <p>
+                Model confidence:
+                <strong>{{ result.confidence }}%</strong>
+            </p>
+            {% endif %}
+
+            <p>{{ result.message }}</p>
+        </div>
+        {% endif %}
+
+        <div class="notice mt-4">
+            Important: this tool is not a confirmed diagnosis.
+            Do not make treatment decisions from an unvalidated model output.
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const start = document.getElementById("startScanner");
+    const capture = document.getElementById("captureLeaf");
+    const stop = document.getElementById("stopScanner");
+    const area = document.getElementById("scannerArea");
+    const video = document.getElementById("cameraPreview");
+    const canvas = document.getElementById("scannerCanvas");
+    const message = document.getElementById("scannerMessage");
+    const input = document.getElementById(
+        "{{ form.image.id_for_label|escapejs }}"
+    );
+
+    let stream = null;
+
+    if (!start || !capture || !stop || !area ||
+        !video || !canvas || !message || !input) {
+        console.error("Scanner elements are missing from disease.html.");
+        return;
+    }
+
+    async function closeCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+
+        video.srcObject = null;
+        area.hidden = true;
+        capture.hidden = true;
+        stop.hidden = true;
+        start.hidden = false;
+    }
+
+    start.addEventListener("click", async function () {
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+            message.textContent =
+                "Camera unavailable. Open this site using localhost or HTTPS.";
+            return;
+        }
+
+        message.textContent = "Opening camera...";
+
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: "environment" } },
+                audio: false
+            });
+
+            video.srcObject = stream;
+            area.hidden = false;
+            capture.hidden = false;
+            stop.hidden = false;
+            start.hidden = true;
+
+            await video.play();
+
+            message.textContent =
+                "Camera ready. Position one leaf and click Capture Photo.";
+        } catch (error) {
+            console.error("Camera error:", error);
+
+            if (error.name === "NotAllowedError") {
+                message.textContent =
+                    "Camera permission denied. Allow camera access in browser settings.";
+            } else if (error.name === "NotFoundError") {
+                message.textContent = "No camera was found on this device.";
+            } else {
+                message.textContent =
+                    "Could not open camera: " + error.name;
+            }
+
+            await closeCamera();
+        }
+    });
+
+    capture.addEventListener("click", function () {
+        if (!stream || !video.videoWidth) {
+            message.textContent =
+                "Wait until the camera preview appears.";
+            return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(async function (blob) {
+            if (!blob) {
+                message.textContent =
+                    "Could not capture photo. Please try again.";
+                return;
+            }
+
+            try {
+                const file = new File(
+                    [blob],
+                    "scanned_leaf.jpg",
+                    { type: "image/jpeg" }
+                );
+
+                const transfer = new DataTransfer();
+                transfer.items.add(file);
+                input.files = transfer.files;
+
+                message.textContent =
+                    "Leaf captured! Click Analyze image to detect the disease.";
+
+                await closeCamera();
+            } catch (error) {
+                console.error(error);
+                message.textContent =
+                    "Could not attach the captured photo. Please try again.";
+            }
+        }, "image/jpeg", 0.92);
+    });
+
+    stop.addEventListener("click", async function () {
+        await closeCamera();
+        message.textContent = "Camera closed.";
+    });
+
+    window.addEventListener("pagehide", function () {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    });
+});
+</script>
+{% endblock %}

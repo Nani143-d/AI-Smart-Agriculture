@@ -1,0 +1,877 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | AI Smart Agriculture{% endblock %}
+
+{% block content %}
+
+<style>
+/* ==========================================
+   AI SMART AGRICULTURE DASHBOARD
+   Dark Green + Neon Green Animated Theme
+========================================== */
+
+:root {
+    --ag-bg: #050908;
+    --ag-card: rgba(12, 20, 17, 0.88);
+    --ag-border: rgba(184, 255, 56, 0.16);
+    --ag-green: #B8FF38;
+    --ag-green-light: #D3FFB0;
+    --ag-text: #F1F8F2;
+    --ag-muted: #9EAFA3;
+}
+
+/* Main background */
+
+.dashboard-page {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 100vh;
+    padding: 65px 0 80px;
+    color: var(--ag-text);
+    background:
+        radial-gradient(
+            ellipse at 10% 0%,
+            rgba(184, 255, 56, 0.10),
+            transparent 38%
+        ),
+        radial-gradient(
+            ellipse at 100% 35%,
+            rgba(25, 130, 70, 0.12),
+            transparent 38%
+        ),
+        var(--ag-bg);
+}
+
+/* Floating ambient glow */
+
+.dashboard-page::before,
+.dashboard-page::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.17;
+    pointer-events: none;
+    animation: ambientFloat 12s ease-in-out infinite alternate;
+}
+
+.dashboard-page::before {
+    top: 5%;
+    left: -180px;
+    background: #B8FF38;
+}
+
+.dashboard-page::after {
+    top: 45%;
+    right: -180px;
+    background: #087F48;
+    animation-delay: -6s;
+}
+
+@keyframes ambientFloat {
+    from {
+        transform: translate3d(0, 0, 0) scale(0.9);
+    }
+
+    to {
+        transform: translate3d(35px, 55px, 0) scale(1.15);
+    }
+}
+
+.dashboard-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* ==========================================
+   WELCOME SECTION
+========================================== */
+
+.dashboard-intro {
+    margin-bottom: 42px;
+    animation: revealUp 0.8s ease both;
+}
+
+.dashboard-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    color: var(--ag-green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.dashboard-eyebrow::before {
+    content: "";
+    width: 26px;
+    height: 2px;
+    background: var(--ag-green);
+    box-shadow: 0 0 14px rgba(184, 255, 56, 0.65);
+}
+
+.dashboard-title {
+    margin: 0 0 15px;
+    color: var(--ag-text);
+    font-size: clamp(32px, 5vw, 54px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.15;
+}
+
+.dashboard-title span {
+    color: var(--ag-green);
+    text-shadow: 0 0 28px rgba(184, 255, 56, 0.18);
+    overflow-wrap: anywhere;
+}
+
+.dashboard-description {
+    max-width: 620px;
+    margin: 0;
+    color: var(--ag-muted);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* Animated underline */
+
+.dashboard-intro::after {
+    content: "";
+    display: block;
+    width: 90px;
+    height: 3px;
+    margin-top: 25px;
+    border-radius: 5px;
+    background: linear-gradient(
+        90deg,
+        var(--ag-green),
+        transparent
+    );
+    animation: underlineGrow 1s ease both;
+    animation-delay: 0.4s;
+    transform-origin: left;
+}
+
+@keyframes underlineGrow {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+
+    to {
+        width: 90px;
+        opacity: 1;
+    }
+}
+
+/* ==========================================
+   SECTION HEADINGS
+========================================== */
+
+.dashboard-section-title {
+    margin-bottom: 22px;
+    color: var(--ag-text);
+    font-size: 20px;
+    font-weight: 750;
+    letter-spacing: -0.4px;
+}
+
+.dashboard-section-title::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 20px;
+    margin-right: 12px;
+    vertical-align: -3px;
+    border-radius: 4px;
+    background: var(--ag-green);
+    box-shadow: 0 0 12px rgba(184, 255, 56, 0.35);
+}
+
+/* ==========================================
+   AGRICULTURE TOOL CARDS
+========================================== */
+
+.dashboard-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 195px;
+    padding: 25px 22px;
+    overflow: hidden;
+    isolation: isolate;
+
+    color: var(--ag-text);
+    text-decoration: none;
+
+    background: linear-gradient(
+        145deg,
+        rgba(20, 39, 27, 0.96),
+        rgba(8, 17, 12, 0.98)
+    );
+
+    border: 1px solid var(--ag-border);
+    border-radius: 19px;
+
+    transition:
+        transform 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        background 0.35s ease;
+
+    animation: revealUp 0.7s ease both;
+}
+
+/* Decorative circle */
+
+.dashboard-tile::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -65px;
+    right: -65px;
+    width: 155px;
+    height: 155px;
+    border-radius: 50%;
+
+    background: rgba(184, 255, 56, 0.075);
+    border: 1px solid rgba(184, 255, 56, 0.10);
+
+    transition:
+        transform 0.5s ease,
+        background 0.5s ease;
+}
+
+/* Light sweep */
+
+.dashboard-tile::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: -130%;
+    width: 65%;
+    height: 100%;
+
+    pointer-events: none;
+
+    transform: skewX(-22deg);
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.055),
+        transparent
+    );
+
+    transition: left 0.75s ease;
+}
+
+.dashboard-tile:hover {
+    color: var(--ag-text);
+    text-decoration: none;
+
+    transform: translateY(-8px);
+
+    border-color: rgba(184, 255, 56, 0.55);
+
+    background: linear-gradient(
+        145deg,
+        rgba(27, 52, 33, 0.98),
+        rgba(10, 23, 15, 0.99)
+    );
+
+    box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.28),
+        0 0 28px rgba(184, 255, 56, 0.075);
+}
+
+.dashboard-tile:hover::before {
+    transform: scale(1.45);
+    background: rgba(184, 255, 56, 0.13);
+}
+
+.dashboard-tile:hover::after {
+    left: 150%;
+}
+
+.dashboard-tile:focus-visible {
+    outline: 2px solid var(--ag-green);
+    outline-offset: 4px;
+}
+
+/* Card icons */
+
+.tile-icon {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    place-items: center;
+
+    width: 53px;
+    height: 53px;
+    margin-bottom: 23px;
+
+    font-size: 25px;
+
+    background: rgba(184, 255, 56, 0.085);
+    border: 1px solid rgba(184, 255, 56, 0.18);
+    border-radius: 15px;
+
+    transition:
+        transform 0.35s ease,
+        background 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+.dashboard-tile:hover .tile-icon {
+    transform: translateY(-3px) rotate(-5deg);
+    background: rgba(184, 255, 56, 0.15);
+    box-shadow: 0 0 20px rgba(184, 255, 56, 0.08);
+}
+
+.tile-title {
+    position: relative;
+    z-index: 1;
+
+    margin-bottom: 9px;
+
+    color: var(--ag-text);
+    font-size: 16px;
+    font-weight: 750;
+}
+
+.tile-description {
+    position: relative;
+    z-index: 1;
+
+    margin: 0;
+
+    color: var(--ag-muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+/* ==========================================
+   DATA PANELS
+========================================== */
+
+.dashboard-panel {
+    position: relative;
+    margin-top: 30px;
+    padding: 27px;
+    overflow: hidden;
+
+    background: linear-gradient(
+        145deg,
+        rgba(17, 34, 25, 0.91),
+        rgba(7, 15, 10, 0.97)
+    );
+
+    border: 1px solid var(--ag-border);
+    border-radius: 19px;
+
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.13);
+
+    animation: revealUp 0.8s ease both;
+}
+
+.dashboard-panel:nth-of-type(2) {
+    animation-delay: 0.12s;
+}
+
+.dashboard-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.dashboard-panel-title {
+    margin: 0;
+    color: var(--ag-text);
+    font-size: 18px;
+    font-weight: 750;
+}
+
+.dashboard-panel-label {
+    display: inline-block;
+    padding: 7px 11px;
+
+    color: var(--ag-green-light);
+
+    background: rgba(184, 255, 56, 0.07);
+    border: 1px solid rgba(184, 255, 56, 0.16);
+    border-radius: 8px;
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    white-space: nowrap;
+}
+
+/* ==========================================
+   DATA TABLES
+========================================== */
+
+.dashboard-table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--ag-text);
+    --bs-table-border-color: rgba(184, 255, 56, 0.10);
+
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.dashboard-table thead th {
+    padding: 15px 14px;
+
+    color: var(--ag-green);
+    background: rgba(184, 255, 56, 0.045);
+
+    border-bottom: 1px solid var(--ag-border);
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.dashboard-table tbody td {
+    padding: 17px 14px;
+
+    color: #E1EBE3;
+
+    border-bottom: 1px solid rgba(184, 255, 56, 0.07);
+
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.dashboard-table tbody tr {
+    transition: background 0.25s ease;
+}
+
+.dashboard-table tbody tr:hover {
+    background: rgba(184, 255, 56, 0.045);
+}
+
+.dashboard-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.dashboard-table tbody td:first-child {
+    color: var(--ag-green-light);
+    font-weight: 650;
+}
+
+/* Empty table messages */
+
+.dashboard-empty {
+    padding: 28px 15px !important;
+
+    color: var(--ag-muted) !important;
+
+    text-align: center;
+    white-space: normal !important;
+    line-height: 1.8;
+}
+
+/* Scrollbar */
+
+.table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(184, 255, 56, 0.35) transparent;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: rgba(184, 255, 56, 0.35);
+    border-radius: 10px;
+}
+
+/* ==========================================
+   ENTRANCE ANIMATIONS
+========================================== */
+
+@keyframes revealUp {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+========================================== */
+
+@media (max-width: 767px) {
+    .dashboard-page {
+        padding-top: 38px;
+        padding-bottom: 50px;
+    }
+
+    .dashboard-title {
+        letter-spacing: -1.2px;
+    }
+
+    .dashboard-intro {
+        margin-bottom: 30px;
+    }
+
+    .dashboard-tile {
+        min-height: 175px;
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .tile-icon {
+        width: 47px;
+        height: 47px;
+        margin-bottom: 18px;
+        font-size: 23px;
+    }
+
+    .tile-title {
+        font-size: 14px;
+    }
+
+    .tile-description {
+        font-size: 11px;
+    }
+
+    .dashboard-panel {
+        padding: 18px 14px;
+        border-radius: 15px;
+    }
+
+    .dashboard-panel-title {
+        font-size: 16px;
+    }
+
+    .dashboard-panel-label {
+        padding: 6px 8px;
+        font-size: 9px;
+    }
+
+    .dashboard-table thead th,
+    .dashboard-table tbody td {
+        padding: 13px 11px;
+    }
+}
+
+/* Respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-page::before,
+    .dashboard-page::after,
+    .dashboard-intro,
+    .dashboard-tile,
+    .dashboard-panel,
+    .dashboard-intro::after {
+        animation: none !important;
+    }
+
+    .dashboard-tile,
+    .dashboard-tile::before,
+    .dashboard-tile::after,
+    .tile-icon,
+    .dashboard-table tbody tr {
+        transition: none !important;
+    }
+}
+</style>
+
+
+<section class="dashboard-page">
+
+    <div class="container dashboard-content">
+
+        <!-- Welcome section -->
+
+        <header class="dashboard-intro">
+
+            <span class="dashboard-eyebrow">
+                YOUR WORKSPACE
+            </span>
+
+            <h1 class="dashboard-title">
+                Welcome, <span>{{ user.username }}</span>.
+            </h1>
+
+            <p class="dashboard-description">
+                Here is a summary of your recent crop activity.
+                Explore your agriculture tools and make smarter
+                farming decisions with AI.
+            </p>
+
+        </header>
+
+
+        <!-- Agriculture tools -->
+
+        <h2 class="dashboard-section-title">
+            Agriculture tools
+        </h2>
+
+        <div class="row g-3 mb-4">
+
+            <!-- Crop Disease -->
+
+            <div class="col-6 col-lg-3">
+
+                <a
+                    class="dashboard-tile"
+                    href="{% url 'disease' %}"
+                    style="animation-delay: 0.05s;"
+                >
+
+                    <span class="tile-icon">🌿</span>
+
+                    <strong class="tile-title">
+                        Crop disease
+                    </strong>
+
+                    <small class="tile-description">
+                        Upload a leaf image to identify possible crop diseases.
+                    </small>
+
+                </a>
+
+            </div>
+
+
+            <!-- Fertilizer -->
+
+            <div class="col-6 col-lg-3">
+
+                <a
+                    class="dashboard-tile"
+                    href="{% url 'fertilizer' %}"
+                    style="animation-delay: 0.12s;"
+                >
+
+                    <span class="tile-icon">🧪</span>
+
+                    <strong class="tile-title">
+                        Fertilizer
+                    </strong>
+
+                    <small class="tile-description">
+                        Review nutrient inputs and fertilizer recommendations.
+                    </small>
+
+                </a>
+
+            </div>
+
+
+            <!-- Yield Prediction -->
+
+            <div class="col-6 col-lg-3">
+
+                <a
+                    class="dashboard-tile"
+                    href="{% url 'yield_prediction' %}"
+                    style="animation-delay: 0.19s;"
+                >
+
+                    <span class="tile-icon">📈</span>
+
+                    <strong class="tile-title">
+                        Yield prediction
+                    </strong>
+
+                    <small class="tile-description">
+                        Estimate potential crop output from your inputs.
+                    </small>
+
+                </a>
+
+            </div>
+
+
+            <!-- Weather -->
+
+            <div class="col-6 col-lg-3">
+
+                <a
+                    class="dashboard-tile"
+                    href="{% url 'weather' %}"
+                    style="animation-delay: 0.26s;"
+                >
+
+                    <span class="tile-icon">🌦️</span>
+
+                    <strong class="tile-title">
+                        Weather
+                    </strong>
+
+                    <small class="tile-description">
+                        Check current weather conditions for farming.
+                    </small>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Recent yield analyses -->
+
+        <section class="dashboard-panel">
+
+            <div class="dashboard-panel-header">
+
+                <h2 class="dashboard-panel-title">
+                    Recent yield analyses
+                </h2>
+
+                <span class="dashboard-panel-label">
+                    CROP DATA
+                </span>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table dashboard-table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Crop</th>
+                            <th>Soil</th>
+                            <th>N</th>
+                            <th>P</th>
+                            <th>K</th>
+                            <th>Estimate (t/ha)</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in analyses %}
+
+                        <tr>
+                            <td>{{ item.crop_name }}</td>
+                            <td>{{ item.soil_type }}</td>
+                            <td>{{ item.nitrogen }}</td>
+                            <td>{{ item.phosphorus }}</td>
+                            <td>{{ item.potassium }}</td>
+                            <td>{{ item.predicted_yield|default:"—" }}</td>
+                            <td>{{ item.created_at|date:"d M Y" }}</td>
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="7" class="dashboard-empty">
+                                No yield analyses yet.
+                                Start with the Yield Prediction tool.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- Recent uploaded crop images -->
+
+        <section class="dashboard-panel">
+
+            <div class="dashboard-panel-header">
+
+                <h2 class="dashboard-panel-title">
+                    Recent uploaded crop images
+                </h2>
+
+                <span class="dashboard-panel-label">
+                    DISEASE REPORTS
+                </span>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table dashboard-table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Result status</th>
+                            <th>Confidence</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in diseases %}
+
+                        <tr>
+
+                            <td>{{ item.disease }}</td>
+
+                            <td>
+                                {% if item.confidence %}
+                                    {{ item.confidence }}%
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ item.created_at|date:"d M Y" }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="3" class="dashboard-empty">
+                                No crop images uploaded yet.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</section>
+
+{% endblock %}

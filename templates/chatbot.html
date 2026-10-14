@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}AgriAI | Smart Agriculture{% endblock %}
+
+{% block content %}
+<style>
+    .ai-chat-container {
+        max-width: 900px;
+        margin: 35px auto;
+        padding: 25px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
+    }
+
+    .ai-chat-header {
+        margin-bottom: 25px;
+    }
+
+    .ai-chat-header .eyebrow {
+        color: #527a26;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 3px;
+    }
+
+    .ai-chat-header h1 {
+        margin: 12px 0;
+        font-size: clamp(30px, 5vw, 45px);
+        font-weight: 800;
+        color: #142219;
+    }
+
+    .ai-chat-header p {
+        color: #68736b;
+    }
+
+    .ai-chat-messages {
+        height: 420px;
+        overflow-y: auto;
+        padding: 18px;
+        background: #f6f8f4;
+        border: 1px solid #e7ece4;
+        border-radius: 15px;
+        margin-bottom: 20px;
+    }
+
+    .chat-message {
+        max-width: 85%;
+        padding: 13px 16px;
+        margin-bottom: 15px;
+        border-radius: 14px;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .chat-message.user {
+        margin-left: auto;
+        background: #b8ff38;
+        color: #15200e;
+        border-bottom-right-radius: 4px;
+    }
+
+    .chat-message.assistant {
+        margin-right: auto;
+        background: #fff;
+        color: #243128;
+        border: 1px solid #e5eae2;
+        border-bottom-left-radius: 4px;
+    }
+
+    .chat-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 800;
+        margin-bottom: 6px;
+        opacity: 0.7;
+    }
+
+    .ai-chat-input {
+        display: flex;
+        gap: 12px;
+    }
+
+    .ai-chat-input textarea {
+        flex: 1;
+        min-width: 0;
+        min-height: 58px;
+        resize: vertical;
+        padding: 15px;
+        border: 1px solid #dce4d8;
+        border-radius: 12px;
+        font: inherit;
+        outline: none;
+    }
+
+    .ai-chat-input textarea:focus {
+        border-color: #80b92c;
+        box-shadow: 0 0 0 3px rgba(184, 255, 56, 0.2);
+    }
+
+    .ai-chat-input button {
+        align-self: stretch;
+        padding: 0 22px;
+        border: none;
+        border-radius: 12px;
+        background: #b8ff38;
+        color: #142219;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .ai-chat-input button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+    }
+
+    .chat-status {
+        min-height: 22px;
+        margin-top: 10px;
+        color: #68736b;
+        font-size: 13px;
+    }
+
+    .chat-examples {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin: 15px 0;
+    }
+
+    .chat-examples button {
+        padding: 9px 12px;
+        border: 1px solid #dce4d8;
+        border-radius: 20px;
+        background: #fff;
+        cursor: pointer;
+        color: #344536;
+    }
+
+    .chat-examples button:hover {
+        background: #eff9df;
+    }
+
+    @media (max-width: 600px) {
+        .ai-chat-container {
+            margin: 15px auto;
+            padding: 15px;
+        }
+
+        .ai-chat-messages {
+            height: 55vh;
+            padding: 12px;
+        }
+
+        .chat-message {
+            max-width: 95%;
+        }
+
+        .ai-chat-input {
+            flex-direction: column;
+        }
+
+        .ai-chat-input button {
+            min-height: 48px;
+        }
+    }
+</style>
+
+<section class="container page-wrap">
+    <div class="ai-chat-container">
+
+        <header class="ai-chat-header">
+            <span class="eyebrow">AI FARMING SUPPORT</span>
+            <h1>🌱 AgriAI Assistant</h1>
+            <p>
+                Ask questions about crops, soil, plant diseases,
+                irrigation, fertilizer, weather, and farming practices.
+            </p>
+        </header>
+
+        <div class="chat-examples">
+            <button type="button"
+                data-question="How can I improve soil fertility?">
+                🌱 Soil fertility
+            </button>
+
+            <button type="button"
+                data-question="What are the common diseases affecting tomato plants?">
+                🍅 Crop diseases
+            </button>
+
+            <button type="button"
+                data-question="How should I manage irrigation for rice cultivation?">
+                💧 Irrigation
+            </button>
+
+            <button type="button"
+                data-question="Explain sustainable farming practices for beginners.">
+                🌾 Farming tips
+            </button>
+        </div>
+
+        <div id="chatMessages"
+             class="ai-chat-messages"
+             aria-live="polite">
+            <div class="chat-message assistant">
+                <span class="chat-label">🌱 AgriAI</span>
+                Hello! I'm your AI farming assistant.
+                Ask me a farming question to get started.
+            </div>
+        </div>
+
+        <form id="chatForm">
+            {% csrf_token %}
+
+            <div class="ai-chat-input">
+                <textarea
+                    id="chatInput"
+                    name="message"
+                    placeholder="Ask your farming question..."
+                    required
+                    maxlength="4000"
+                    aria-label="Your farming question"
+                ></textarea>
+
+                <button id="sendButton" type="submit">
+                    Send ➤
+                </button>
+            </div>
+        </form>
+
+        <div id="chatStatus" class="chat-status"></div>
+
+        <p class="muted" style="font-size:12px; margin-top:15px;">
+            AI-generated advice may not always be accurate.
+            Verify important fertilizer and pesticide decisions
+            with a local agricultural expert.
+        </p>
+
+    </div>
+</section>
+
+<script>
+(() => {
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("chatInput");
+    const messages = document.getElementById("chatMessages");
+    const sendButton = document.getElementById("sendButton");
+    const status = document.getElementById("chatStatus");
+
+    const history = [];
+
+    function addMessage(role, content) {
+        const bubble = document.createElement("div");
+        bubble.className = `chat-message ${role}`;
+
+        const label = document.createElement("span");
+        label.className = "chat-label";
+        label.textContent =
+            role === "user" ? "You" : "🌱 AgriAI";
+
+        const text = document.createElement("div");
+        text.textContent = content;
+
+        bubble.appendChild(label);
+        bubble.appendChild(text);
+        messages.appendChild(bubble);
+
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    document.querySelectorAll("[data-question]").forEach(button => {
+        button.addEventListener("click", () => {
+            input.value = button.dataset.question;
+            input.focus();
+        });
+    });
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            form.requestSubmit();
+        }
+    });
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const question = input.value.trim();
+
+        if (!question || sendButton.disabled) {
+            return;
+        }
+
+        addMessage("user", question);
+        history.push({ role: "user", content: question });
+
+        input.value = "";
+        sendButton.disabled = true;
+        status.textContent = "AgriAI is thinking...";
+
+        try {
+            const csrfToken = form.querySelector(
+                "[name=csrfmiddlewaretoken]"
+            ).value;
+
+            const response = await fetch(
+                "{% url 'chatbot_api' %}",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify({
+                        message: question,
+                        history: history.slice(-10, -1)
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error || "Unable to get an AI response."
+                );
+            }
+
+            addMessage("assistant", data.answer);
+            history.push({
+                role: "assistant",
+                content: data.answer
+            });
+
+            status.textContent = "";
+
+        } catch (error) {
+            addMessage(
+                "assistant",
+                "Sorry, I couldn't answer that question. " +
+                error.message
+            );
+            status.textContent = "Please try again.";
+
+        } finally {
+            sendButton.disabled = false;
+            input.focus();
+        }
+    });
+})();
+</script>
+{% endblock %}

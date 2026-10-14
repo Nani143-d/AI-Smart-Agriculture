@@ -1,0 +1,802 @@
+{% extends "base.html" %}
+{% block title %}Home | AI Smart Agriculture{% endblock %}
+
+{% block content %}
+
+<style>
+/* ==========================================
+   AI SMART AGRICULTURE — ANIMATED HOME
+   Theme: Dark Green + Neon Green
+========================================== */
+
+:root {
+    --home-bg: #07110d;
+    --home-card: rgba(17, 34, 25, 0.82);
+    --home-green: #b8ff60;
+    --home-green-light: #d3ffb0;
+    --home-text: #f1f8f2;
+    --home-muted: #b4c5b8;
+    --home-border: rgba(184, 255, 96, 0.16);
+}
+
+/* HOME PAGE */
+
+.home-page {
+    background: var(--home-bg);
+    color: var(--home-text);
+    overflow: hidden;
+}
+
+/* HERO SECTION */
+
+.hero {
+    position: relative;
+    min-height: 650px;
+    display: flex;
+    align-items: center;
+    padding: 100px 0 75px;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+        radial-gradient(
+            circle at 80% 35%,
+            rgba(72, 150, 66, 0.20),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 15% 85%,
+            rgba(184, 255, 96, 0.08),
+            transparent 30%
+        ),
+        linear-gradient(135deg, #07110d, #0b1d12 55%, #07110d);
+}
+
+/* Animated background glow */
+
+.hero::before,
+.hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.hero::before {
+    width: 380px;
+    height: 380px;
+    top: -120px;
+    right: -80px;
+    background: rgba(184, 255, 96, 0.08);
+    filter: blur(75px);
+    animation: glowMove 9s ease-in-out infinite alternate;
+}
+
+.hero::after {
+    width: 300px;
+    height: 300px;
+    left: 35%;
+    bottom: -170px;
+    background: rgba(53, 165, 91, 0.12);
+    filter: blur(65px);
+    animation: glowMove 12s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes glowMove {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(-35px, 30px) scale(1.2);
+    }
+}
+
+/* Floating circles */
+
+.hero-orb {
+    position: absolute;
+    border: 1px solid rgba(184, 255, 96, 0.15);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: orbFloat 8s ease-in-out infinite;
+}
+
+.hero-orb.orb-one {
+    width: 190px;
+    height: 190px;
+    top: 80px;
+    right: 12%;
+}
+
+.hero-orb.orb-two {
+    width: 95px;
+    height: 95px;
+    bottom: 90px;
+    right: 28%;
+    animation-delay: -3s;
+}
+
+.hero-orb.orb-three {
+    width: 55px;
+    height: 55px;
+    top: 45%;
+    right: 5%;
+    background: rgba(184, 255, 96, 0.04);
+    animation-delay: -5s;
+}
+
+@keyframes orbFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-25px) rotate(12deg);
+    }
+}
+
+/* Hero content */
+
+.hero-inner {
+    position: relative;
+    z-index: 2;
+}
+
+/* Eyebrow */
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--home-green);
+    font-size: 0.77rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    animation: fadeUp 0.8s ease both;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 25px;
+    height: 2px;
+    background: var(--home-green);
+    box-shadow: 0 0 12px rgba(184, 255, 96, 0.65);
+}
+
+/* Main heading */
+
+.hero h1 {
+    max-width: 850px;
+    margin: 0 0 24px;
+    color: var(--home-text);
+    font-size: clamp(2.6rem, 6vw, 5.3rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -2.5px;
+    animation: fadeUp 0.9s 0.15s ease both;
+}
+
+.hero h1 span {
+    display: inline-block;
+    color: var(--home-green);
+    background: linear-gradient(
+        100deg,
+        #b8ff60,
+        #e1ffbd,
+        #92ed5a,
+        #b8ff60
+    );
+    background-size: 250% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShine 6s linear infinite;
+}
+
+@keyframes gradientShine {
+    to {
+        background-position: 250% center;
+    }
+}
+
+/* Hero paragraph */
+
+.hero-copy {
+    max-width: 610px;
+    margin-bottom: 34px;
+    color: var(--home-muted);
+    font-size: 1.08rem;
+    line-height: 1.9;
+    animation: fadeUp 0.9s 0.3s ease both;
+}
+
+/* Hero buttons */
+
+.hero .d-flex {
+    animation: fadeUp 0.9s 0.45s ease both;
+}
+
+.btn-green {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 27px;
+    border: 1px solid var(--home-green);
+    border-radius: 10px;
+    background: var(--home-green);
+    color: #10200d;
+    font-weight: 800;
+    box-shadow: 0 0 0 rgba(184, 255, 96, 0);
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        background 0.3s ease;
+}
+
+.btn-green:hover {
+    background: #d0ff9b;
+    color: #10200d;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 35px rgba(184, 255, 96, 0.2);
+}
+
+.btn-outline-light {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 27px;
+    border: 1px solid rgba(241, 248, 242, 0.35);
+    border-radius: 10px;
+    color: var(--home-text);
+    background: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+    border-color: var(--home-green);
+    background: rgba(184, 255, 96, 0.08);
+    color: var(--home-green);
+    transform: translateY(-4px);
+}
+
+/* Hero statistics */
+
+.hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-top: 60px;
+    animation: fadeUp 1s 0.6s ease both;
+}
+
+.hero-stats > div {
+    min-width: 150px;
+    padding: 0 30px;
+    border-left: 1px solid var(--home-border);
+}
+
+.hero-stats > div:first-child {
+    padding-left: 0;
+    border-left: none;
+}
+
+.hero-stats strong {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--home-green);
+    font-size: 1.7rem;
+    font-weight: 800;
+}
+
+.hero-stats span {
+    color: var(--home-muted);
+    font-size: 0.88rem;
+}
+
+/* GENERAL SECTION */
+
+.home-tools {
+    position: relative;
+    padding-top: 90px !important;
+    padding-bottom: 100px !important;
+}
+
+.section-heading {
+    margin-bottom: 45px;
+    text-align: center;
+}
+
+.section-heading .eyebrow {
+    justify-content: center;
+}
+
+.section-heading h2 {
+    margin-top: 5px;
+    color: var(--home-text);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -1.2px;
+}
+
+.section-heading p {
+    max-width: 600px;
+    margin: 15px auto 0;
+    color: var(--home-muted);
+    line-height: 1.8;
+}
+
+/* FEATURE CARDS */
+
+.feature-card {
+    position: relative;
+    height: 100%;
+    padding: 30px;
+    overflow: hidden;
+    border: 1px solid var(--home-border);
+    border-radius: 18px;
+    background: linear-gradient(
+        145deg,
+        rgba(20, 40, 28, 0.88),
+        rgba(10, 23, 16, 0.92)
+    );
+    transition:
+        transform 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.4s ease,
+        background 0.4s ease;
+    opacity: 0;
+    animation: cardEnter 0.7s ease forwards;
+}
+
+.feature-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 80%;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(
+        100deg,
+        transparent,
+        rgba(184, 255, 96, 0.06),
+        transparent
+    );
+    transition: left 0.7s ease;
+}
+
+.feature-card:hover::before {
+    left: 140%;
+}
+
+.feature-card:hover {
+    transform: translateY(-9px);
+    border-color: rgba(184, 255, 96, 0.55);
+    background: linear-gradient(
+        145deg,
+        rgba(25, 50, 33, 0.96),
+        rgba(12, 28, 18, 0.98)
+    );
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25),
+                0 0 25px rgba(184, 255, 96, 0.05);
+}
+
+.feature-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.feature-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.feature-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.feature-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.feature-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.feature-card:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+/* Feature icons */
+
+.feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    margin-bottom: 23px;
+    border: 1px solid rgba(184, 255, 96, 0.2);
+    border-radius: 16px;
+    background: rgba(184, 255, 96, 0.08);
+    font-size: 1.8rem;
+    transition:
+        transform 0.4s ease,
+        background 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: translateY(-3px) rotate(-6deg) scale(1.08);
+    background: rgba(184, 255, 96, 0.15);
+    box-shadow: 0 0 25px rgba(184, 255, 96, 0.1);
+}
+
+.feature-card h3 {
+    margin-bottom: 13px;
+    color: var(--home-text);
+    font-size: 1.2rem;
+    font-weight: 750;
+}
+
+.feature-card p {
+    margin-bottom: 0;
+    color: var(--home-muted);
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+/* Scroll reveal */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Keyframes */
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: auto;
+        padding: 85px 0 60px;
+    }
+
+    .hero h1 {
+        letter-spacing: -1.5px;
+    }
+
+    .hero-copy {
+        font-size: 1rem;
+    }
+
+    .hero-stats {
+        margin-top: 42px;
+        gap: 25px 0;
+    }
+
+    .hero-stats > div {
+        min-width: 33.33%;
+        padding: 0 12px;
+    }
+
+    .hero-stats strong {
+        font-size: 1.4rem;
+    }
+
+    .hero-stats span {
+        font-size: 0.78rem;
+    }
+
+    .hero-orb.orb-one {
+        width: 130px;
+        height: 130px;
+        right: -30px;
+    }
+
+    .home-tools {
+        padding-top: 60px !important;
+        padding-bottom: 65px !important;
+    }
+
+    .feature-card {
+        padding: 25px;
+    }
+}
+
+/* Respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .feature-card,
+    .reveal {
+        opacity: 1;
+        transform: none;
+    }
+}
+</style>
+
+<div class="home-page">
+
+    <!-- HERO SECTION -->
+
+    <section class="hero">
+
+        <div class="hero-orb orb-one"></div>
+        <div class="hero-orb orb-two"></div>
+        <div class="hero-orb orb-three"></div>
+
+        <div class="container hero-inner">
+
+            <span class="eyebrow">
+                SMARTER FARMING • BETTER INSIGHTS
+            </span>
+
+            <h1>
+                Grow smarter with<br>
+                <span>AI-powered agriculture.</span>
+            </h1>
+
+            <p class="hero-copy">
+                Explore crop health, soil nutrients, weather conditions,
+                and yield estimates in one simple platform.
+                Make informed farming decisions with AI-powered insights.
+            </p>
+
+            <div class="d-flex flex-wrap gap-3">
+
+                {% if user.is_authenticated %}
+
+                    <a class="btn btn-green btn-lg"
+                       href="{% url 'dashboard' %}">
+                        Open dashboard →
+                    </a>
+
+                {% else %}
+
+                    <a class="btn btn-green btn-lg"
+                       href="{% url 'register' %}">
+                        Get started →
+                    </a>
+
+                    <a class="btn btn-outline-light btn-lg"
+                       href="{% url 'login' %}">
+                        Sign in
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+            <div class="hero-stats">
+
+                <div>
+                    <strong>01</strong>
+                    <span>Crop health</span>
+                </div>
+
+                <div>
+                    <strong>02</strong>
+                    <span>Soil insights</span>
+                </div>
+
+                <div>
+                    <strong>03</strong>
+                    <span>Yield estimates</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PLATFORM TOOLS -->
+
+    <section class="container home-tools">
+
+        <div class="section-heading reveal">
+
+            <span class="eyebrow">PLATFORM TOOLS</span>
+
+            <h2>Everything in one place.</h2>
+
+            <p>
+                Explore intelligent tools designed to help you understand
+                crop health, soil conditions, and farming insights.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-6 col-lg-4 reveal">
+                <article class="feature-card">
+
+                    <div class="feature-icon">🌿</div>
+
+                    <h3>Crop disease</h3>
+
+                    <p>
+                        Upload a leaf image and use the trained AI model
+                        to identify possible plant diseases.
+                    </p>
+
+                </article>
+            </div>
+
+
+            <div class="col-md-6 col-lg-4 reveal">
+                <article class="feature-card">
+
+                    <div class="feature-icon">🧪</div>
+
+                    <h3>Fertilizer insights</h3>
+
+                    <p>
+                        Review soil NPK values and explore fertilizer
+                        guidance for agricultural planning.
+                    </p>
+
+                </article>
+            </div>
+
+
+            <div class="col-md-6 col-lg-4 reveal">
+                <article class="feature-card">
+
+                    <div class="feature-icon">📈</div>
+
+                    <h3>Yield estimation</h3>
+
+                    <p>
+                        Explore estimated crop yields using the
+                        prediction model available on the platform.
+                    </p>
+
+                </article>
+            </div>
+
+
+            <div class="col-md-6 col-lg-4 reveal">
+                <article class="feature-card">
+
+                    <div class="feature-icon">🌦️</div>
+
+                    <h3>Live weather</h3>
+
+                    <p>
+                        Check current weather information when the
+                        weather service is configured.
+                    </p>
+
+                </article>
+            </div>
+
+
+            <div class="col-md-6 col-lg-4 reveal">
+                <article class="feature-card">
+
+                    <div class="feature-icon">🤖</div>
+
+                    <h3>Farmer assistant</h3>
+
+                    <p>
+                        Explore helpful answers to common agriculture
+                        questions with the farmer assistant.
+                    </p>
+
+                </article>
+            </div>
+
+
+            <div class="col-md-6 col-lg-4 reveal">
+                <article class="feature-card">
+
+                    <div class="feature-icon">📊</div>
+
+                    <h3>Dashboard</h3>
+
+                    <p>
+                        Review your recent crop analyses and access
+                        the platform's available agriculture tools.
+                    </p>
+
+                </article>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- SCROLL REVEAL ANIMATION -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const revealElements = document.querySelectorAll(".reveal");
+
+    if ("IntersectionObserver" in window) {
+
+        const observer = new IntersectionObserver(
+            function (entries, currentObserver) {
+
+                entries.forEach(function (entry) {
+
+                    if (entry.isIntersecting) {
+
+                        entry.target.classList.add("visible");
+
+                        currentObserver.unobserve(entry.target);
+                    }
+
+                });
+
+            },
+            {
+                threshold: 0.12
+            }
+        );
+
+        revealElements.forEach(function (element) {
+            observer.observe(element);
+        });
+
+    } else {
+
+        revealElements.forEach(function (element) {
+            element.classList.add("visible");
+        });
+
+    }
+
+});
+</script>
+
+{% endblock %}

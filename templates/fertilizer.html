@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Fertilizer | AI Smart Agriculture{% endblock %}
+{% block content %}
+<section class="container page-wrap"><div class="form-panel"><span class="eyebrow">SOIL NUTRIENTS</span><h1 class="page-title">Fertilizer insights</h1><p class="muted">Enter measured NPK values and crop name.</p>
+<form method="post" novalidate>{% csrf_token %}<div class="mb-3"><label class="form-label">Crop</label>{{ form.crop }}{{ form.crop.errors }}</div><div class="row">
+<div class="col-md-4 mb-3"><label class="form-label">Nitrogen (N)</label>{{ form.nitrogen }}</div><div class="col-md-4 mb-3"><label class="form-label">Phosphorus (P)</label>{{ form.phosphorus }}</div><div class="col-md-4 mb-3"><label class="form-label">Potassium (K)</label>{{ form.potassium }}</div></div><button class="btn btn-green mt-2">Review values →</button></form>
+{% if recommendation %}<div class="result-panel mt-4"><h2>{{ recommendation.crop }} — nutrient review</h2><p>{{ recommendation.suggestion }}</p><p>{{ recommendation.message }}</p></div>{% endif %}
+<div class="notice mt-4">NPK numbers need units and local soil-test context. This demo does not calculate a safe fertilizer dosage.</div></div></section>
+{% endblock %}
