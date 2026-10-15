@@ -1,8 +1,265 @@
 {% extends "base.html" %}
-{% block title %}{% if mode == 'register' %}Create account{% else %}Login{% endif %} | AI Smart Agriculture{% endblock %}
+{% block title %}{% if mode == 'register' %}Create Account{% else %}Login{% endif %} | AI Smart Agriculture{% endblock %}
+
 {% block content %}
-<section class="container page-wrap"><div class="form-panel auth-panel"><span class="eyebrow">YOUR FARM WORKSPACE</span>
-{% if mode == "register" %}<h1 class="page-title">Create account</h1><p class="muted">Register to save your analyses.</p><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn-green w-100 mt-3">Create account</button></form><p class="auth-switch">Already registered? <a href="{% url 'login' %}">Login</a></p>
-{% else %}<h1 class="page-title">Welcome back</h1><p class="muted">Sign in to your agriculture dashboard.</p>{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}<form method="post">{% csrf_token %}<label class="form-label">Username</label><input class="form-control mb-3" name="username" required autocomplete="username"><label class="form-label">Password</label><input class="form-control" type="password" name="password" required autocomplete="current-password"><button class="btn btn-green w-100 mt-4">Login</button></form><p class="auth-switch">New here? <a href="{% url 'register' %}">Create an account</a></p>{% endif %}
-</div></section>
+<style>
+.auth-scene {
+    --green: #b8ff38;
+    position: relative;
+    isolation: isolate;
+    min-height: 85vh;
+    padding: 55px 6%;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: #f4f8f0;
+    background: radial-gradient(ellipse at 15% 50%, #122419, transparent 50%),
+                linear-gradient(135deg, #050907, #0a120c);
+}
+.auth-scene * { box-sizing: border-box; }
+.auth-grid {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    opacity: .16;
+    background-image: linear-gradient(#b8ff3812 1px, transparent 1px),
+                      linear-gradient(90deg, #b8ff3812 1px, transparent 1px);
+    background-size: 42px 42px;
+}
+.auth-glow {
+    position: absolute; z-index: -1; width: 280px; height: 280px;
+    border-radius: 50%; filter: blur(90px); opacity: .18;
+    background: #82ff38; animation: glowFloat 8s ease-in-out infinite alternate;
+}
+.glow-a { top: 0; left: -90px; }
+.glow-b { bottom: 0; right: -80px; animation-delay: -4s; }
+
+.auth-layout {
+    width: min(1080px, 100%);
+    display: grid;
+    grid-template-columns: 1fr minmax(320px, 430px);
+    align-items: center;
+    gap: clamp(35px, 7vw, 90px);
+}
+.auth-intro { animation: slideIn .8s ease both; }
+.auth-tag {
+    display: inline-block; padding: 10px 14px;
+    border: 1px solid #b8ff383d; border-radius: 30px;
+    color: #d1ff9c; background: #b8ff3809;
+    font: 10px monospace; letter-spacing: 1.5px;
+}
+.auth-intro h1 {
+    margin: 26px 0 18px; font-size: clamp(42px, 5vw, 70px);
+    line-height: 1.05; letter-spacing: -3px; font-weight: 850;
+}
+.auth-intro h1 span { color: var(--green); }
+.auth-intro > p { max-width: 440px; color: #a1aea0; line-height: 1.9; font-size: 14px; }
+.auth-features { display: grid; gap: 18px; margin-top: 30px; }
+.auth-feature { display: flex; align-items: center; gap: 13px; }
+.auth-feature-icon {
+    width: 43px; height: 43px; display: grid; place-items: center;
+    border: 1px solid #b8ff3833; border-radius: 13px;
+    background: #b8ff380c; color: var(--green); font-size: 21px;
+}
+.auth-feature strong, .auth-feature small { display: block; }
+.auth-feature strong { font-size: 13px; }
+.auth-feature small { color: #899689; margin-top: 5px; font-size: 11px; }
+
+.auth-orbit {
+    position: relative; width: 125px; height: 125px; margin: 32px 0 0 12px;
+    display: grid; place-items: center;
+}
+.orbit-ring {
+    position: absolute; inset: 0; border: 1px dashed #b8ff3860;
+    border-radius: 50%; animation: rotateOrbit 18s linear infinite;
+}
+.orbit-ring.ring-inner { inset: 15px; border-style: solid; animation-direction: reverse; }
+.orbit-center {
+    width: 60px; height: 60px; display: grid; place-items: center;
+    border: 1px solid #b8ff3860; border-radius: 50%;
+    background: #b8ff3815; box-shadow: 0 0 35px #b8ff3822;
+    font-size: 27px; animation: floatPlant 3s ease-in-out infinite;
+}
+
+.auth-card {
+    padding: 32px; border: 1px solid #d7f4cf20; border-radius: 24px;
+    background: linear-gradient(145deg, #142018f5, #080e0af7);
+    box-shadow: 0 30px 90px #0008, inset 0 1px #ffffff08;
+    backdrop-filter: blur(18px);
+    animation: cardEnter .85s cubic-bezier(.16,1,.3,1) .1s both;
+}
+.auth-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 34px; }
+.auth-logo {
+    width: 40px; height: 40px; display: grid; place-items: center;
+    border-radius: 12px; background: var(--green); color: #10180b;
+    font-weight: 900; box-shadow: 0 0 25px #b8ff3828;
+}
+.auth-secure { color: #8e9e8c; font: 9px monospace; letter-spacing: 1px; }
+.auth-eyebrow { color: var(--green); font: 10px monospace; letter-spacing: 2px; }
+.auth-card h2 { margin: 12px 0 8px; font-size: 29px; letter-spacing: -1px; line-height: 1.2; }
+.auth-card h2 span { color: var(--green); }
+.auth-description { color: #9ba89a; font-size: 12px; line-height: 1.7; margin-bottom: 25px; }
+
+.auth-form { display: grid; gap: 18px; }
+.auth-field { min-width: 0; animation: fieldEnter .5s ease both; }
+.auth-field:nth-child(2) { animation-delay: .08s; }
+.auth-field:nth-child(3) { animation-delay: .16s; }
+.auth-field label { display: block; color: #d8e2d4; margin-bottom: 9px; font-size: 11px; font-weight: 600; }
+.auth-input, .auth-field input, .auth-field select, .auth-field textarea {
+    display: block; width: 100%; min-height: 47px; padding: 12px 13px;
+    border: 1px solid #c5dfbd22; border-radius: 10px; outline: none;
+    background: #03080580; color: #f4f8f0; font-size: 12px;
+    transition: border-color .25s, box-shadow .25s, background .25s;
+}
+.auth-input::placeholder, .auth-field input::placeholder { color: #697668; }
+.auth-input:focus, .auth-field input:focus, .auth-field select:focus, .auth-field textarea:focus {
+    border-color: #b8ff38b8; background: #b8ff3808;
+    box-shadow: 0 0 0 4px #b8ff3810;
+}
+.auth-submit {
+    width: 100%; min-height: 50px; margin-top: 5px; padding: 0 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    border: 1px solid var(--green); border-radius: 10px;
+    background: var(--green); color: #10180b; font-weight: 800; font-size: 12px;
+    cursor: pointer; transition: transform .25s, box-shadow .25s, background .25s;
+}
+.auth-submit:hover { transform: translateY(-2px); background: #ccff70; box-shadow: 0 9px 30px #b8ff3828; }
+.auth-submit:active { transform: scale(.985); }
+.auth-submit span:last-child { font-size: 19px; transition: transform .25s; }
+.auth-submit:hover span:last-child { transform: translate(3px,-3px); }
+
+.auth-switch { text-align: center; color: #9ba699; margin: 23px 0 0; font-size: 11px; line-height: 1.8; }
+.auth-switch a { color: var(--green); text-decoration: none; font-weight: 700; }
+.auth-switch a:hover { text-decoration: underline; }
+.auth-error {
+    margin-bottom: 17px; padding: 12px; border: 1px solid #ff777744;
+    border-radius: 9px; background: #ff55550c; color: #ffaaaa;
+    font-size: 12px; overflow-wrap: anywhere;
+}
+.auth-help { display: block; margin-top: 6px; color: #9ba89a; font-size: 10px; }
+.auth-field-error { display: block; margin-top: 6px; color: #ffaaaa; font-size: 11px; }
+.auth-card-footer {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px;
+    margin-top: 27px; padding-top: 17px; border-top: 1px solid #c5dfbd16;
+    color: #718071; font: 8px monospace; letter-spacing: .5px;
+}
+
+@keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes cardEnter { from { opacity: 0; transform: translateY(24px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes fieldEnter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes glowFloat { to { transform: translate(30px, 25px) scale(1.12); } }
+@keyframes rotateOrbit { to { transform: rotate(360deg); } }
+@keyframes floatPlant { 50% { transform: translateY(-5px); } }
+
+@media (max-width: 800px) {
+    .auth-scene { padding: 40px 5%; }
+    .auth-layout { grid-template-columns: 1fr; max-width: 440px; gap: 30px; }
+    .auth-intro h1 { font-size: clamp(42px, 10vw, 58px); }
+    .auth-orbit { display: none; }
+    .auth-features { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .auth-feature { align-items: flex-start; gap: 8px; }
+    .auth-feature-icon { width: 35px; height: 35px; }
+    .auth-card { padding: 26px 22px; }
+}
+@media (max-width: 420px) {
+    .auth-features { grid-template-columns: 1fr; }
+    .auth-card { padding: 23px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .auth-scene *, .auth-scene *::before, .auth-scene *::after {
+        animation: none !important; transition: none !important;
+    }
+}
+</style>
+
+<section class="auth-scene">
+    <div class="auth-grid"></div>
+    <div class="auth-glow glow-a"></div>
+    <div class="auth-glow glow-b"></div>
+
+    <div class="auth-layout">
+        <div class="auth-intro">
+            <span class="auth-tag">✳ SMART FARMING · SMART FUTURE</span>
+            <h1>Grow smarter.<br><span>Farm better.</span></h1>
+            <p>
+                Your intelligent agriculture workspace for crop health,
+                fertilizer guidance, weather insights, and yield prediction.
+            </p>
+
+            <div class="auth-features">
+                <div class="auth-feature">
+                    <span class="auth-feature-icon">✳</span>
+                    <div><strong>AI Crop Intelligence</strong><small>Make informed crop decisions</small></div>
+                </div>
+                <div class="auth-feature">
+                    <span class="auth-feature-icon">⌁</span>
+                    <div><strong>Smarter Agriculture</strong><small>Tools designed for your farm</small></div>
+                </div>
+            </div>
+
+            <div class="auth-orbit" aria-hidden="true">
+                <div class="orbit-ring"></div>
+                <div class="orbit-ring ring-inner"></div>
+                <div class="orbit-center">🌱</div>
+            </div>
+        </div>
+
+        <div class="auth-card">
+            <div class="auth-card-top">
+                <div class="auth-logo">A<span>G</span></div>
+                <span class="auth-secure">● SECURE ACCESS</span>
+            </div>
+
+            {% if mode == "register" %}
+                <span class="auth-eyebrow">START YOUR JOURNEY</span>
+                <h2>Create your account<span>.</span></h2>
+                <p class="auth-description">Join your smart agriculture workspace.</p>
+
+                <form method="post" class="auth-form">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}<div class="auth-error">{{ form.non_field_errors }}</div>{% endif %}
+
+                    {% for field in form %}
+                        <div class="auth-field">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<small class="auth-help">{{ field.help_text|safe }}</small>{% endif %}
+                            {% for error in field.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="auth-submit"><span>Create Account</span><span>↗</span></button>
+                </form>
+
+                <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Sign in →</a></p>
+            {% else %}
+                <span class="auth-eyebrow">WELCOME BACK</span>
+                <h2>Good to see you<span>.</span></h2>
+                <p class="auth-description">Sign in to continue to your agriculture dashboard.</p>
+
+                {% if error %}<div class="auth-error" role="alert">{{ error }}</div>{% endif %}
+
+                <form method="post" class="auth-form">
+                    {% csrf_token %}
+                    <div class="auth-field">
+                        <label for="auth-username">Username</label>
+                        <input id="auth-username" class="auth-input" type="text" name="username"
+                               placeholder="Enter your username" autocomplete="username" required autofocus>
+                    </div>
+                    <div class="auth-field">
+                        <label for="auth-password">Password</label>
+                        <input id="auth-password" class="auth-input" type="password" name="password"
+                               placeholder="Enter your password" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" class="auth-submit"><span>Sign In to Dashboard</span><span>↗</span></button>
+                </form>
+
+                <p class="auth-switch">New to smart farming? <a href="{% url 'register' %}">Create account →</a></p>
+            {% endif %}
+
+            <div class="auth-card-footer">
+                <span>AI SMART AGRICULTURE</span>
+                <span>GROW WITH INTELLIGENCE ✳</span>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
