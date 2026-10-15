@@ -3,6 +3,11 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# =========================================================
+# SECURITY SETTINGS
+# =========================================================
+
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "dev-only-change-this-key"
@@ -16,6 +21,15 @@ ALLOWED_HOSTS = [
     "ai-smart-agriculture-g78z.onrender.com",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://ai-smart-agriculture-g78z.onrender.com",
+]
+
+
+# =========================================================
+# APPLICATIONS
+# =========================================================
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -26,8 +40,14 @@ INSTALLED_APPS = [
     "agriculture.apps.AgricultureConfig",
 ]
 
+
+# =========================================================
+# MIDDLEWARE
+# =========================================================
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -36,7 +56,17 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+# =========================================================
+# URL CONFIGURATION
+# =========================================================
+
 ROOT_URLCONF = "smart_agriculture.urls"
+
+
+# =========================================================
+# TEMPLATES
+# =========================================================
 
 TEMPLATES = [
     {
@@ -53,8 +83,20 @@ TEMPLATES = [
     },
 ]
 
+
+# =========================================================
+# WSGI / ASGI
+# =========================================================
+
 WSGI_APPLICATION = "smart_agriculture.wsgi.application"
 ASGI_APPLICATION = "smart_agriculture.asgi.application"
+
+
+# =========================================================
+# DATABASE
+# =========================================================
+# SQLite works locally.
+# For production, PostgreSQL is recommended for persistent data.
 
 DATABASES = {
     "default": {
@@ -63,29 +105,87 @@ DATABASES = {
     }
 }
 
+
+# =========================================================
+# PASSWORD VALIDATION
+# =========================================================
+
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator"
+        ),
     },
 ]
 
+
+# =========================================================
+# INTERNATIONALIZATION
+# =========================================================
+
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "Asia/Kolkata"
+
 USE_I18N = True
+
 USE_TZ = True
 
+
+# =========================================================
+# STATIC FILES
+# =========================================================
+
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# WhiteNoise compressed static-file storage
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
+
+
+# =========================================================
+# MEDIA FILES
+# =========================================================
+
 MEDIA_URL = "/media/"
+
 MEDIA_ROOT = BASE_DIR / "media"
 
+
+# =========================================================
+# AUTHENTICATION
+# =========================================================
+
 LOGIN_URL = "login"
+
 LOGIN_REDIRECT_URL = "dashboard"
+
 LOGOUT_REDIRECT_URL = "home"
+
+
+# =========================================================
+# DEFAULT PRIMARY KEY
+# =========================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
